@@ -2,4 +2,19 @@ body {
     background: #0b0b12;
     color: #cfcff7;
     font-family: ui-sans-serif, system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#whisper {
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    color: #b8aaff;
+    text-shadow: 0 0 8px rgba(150, 120, 255, 0.4);
+}
+
+#whisper.glow {
+    opacity: 1;
 }
