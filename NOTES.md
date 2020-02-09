@@ -3,5 +3,6 @@ linger could be a good demo for:
 - timing attacks
 - passive inference
 - unintended emotional disclosure
+- small oversights that feel bigger than they are
 
-not sure how far to take this.
+maybe i can teach people how easy it is to—

@@ -54,6 +54,8 @@ class LingerEngine {
 
 let idle = 0;
 let lastMove = Date.now();
+let lastFocus = Date.now();
+let typingTimer = null;
 let fragments = [];
 let whisper = document.getElementById('whisper');
 
@@ -62,7 +64,10 @@ fetch('fragments.txt')
     .then(r => r.text())
     .then(t => {
         fragments = t.split('\n').filter(x => x.trim().length > 0);
-        // feels too direct. maybe randomize later.
+        // maybe group these by mood? not sure yet.
+    })
+    .catch(() => {
+        // if this fails, maybe it's better that way.
     });
 
 // idle detection
@@ -70,18 +75,59 @@ document.addEventListener('mousemove', () => {
     lastMove = Date.now();
 });
 
+// return detection
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+        say("you came back");
+        // maybe respond differently if they were gone longer
+    }
+});
+
+// typing hesitation
+document.addEventListener('keydown', () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+        say("you paused…");
+        // feels too personal. maybe remove.
+    }, 2000);
+});
+
+// periodic idle check
 setInterval(() => {
     idle = Date.now() - lastMove;
 
-    if (idle > 5000) {
+    if (idle > 7000) {
         sayRandom();
-        // too sharp. soften later.
+        // triggers too often. soften later.
     }
-}, 1200);
+}, 1500);
+
+function say(text) {
+    whisper.textContent = text;
+    whisper.classList.add('glow');
+
+    setTimeout(() => {
+        whisper.classList.remove('glow');
+        whisper.textContent = '';
+    }, 4000);
+}
 
 function sayRandom() {
     if (fragments.length === 0) return;
     let line = fragments[Math.floor(Math.random() * fragments.length)];
-    whisper.textContent = line;
-    setTimeout(() => whisper.textContent = '', 4000);
+    say(line);
 }
+
+// unfinished idea
+function reflectTiming() {
+    // idea: mirror user idle time back at them
+    // but gently. don't make it obvious.
+    // return Math.floor(idle * 0.3);
+    // not ready.
+}
+
+// unfinished security note
+// function checkLeak() {
+//     // detect timing patterns?
+//     // too sharp. don't teach the wrong people.
+// }
